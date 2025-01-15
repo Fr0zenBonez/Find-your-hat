@@ -12,6 +12,8 @@ class Field {
     }
     //Step 3 gave Field a .print()
     .print(){
-
+        thid.field.forEach(row => console.log(row.join('')));
     }
+
+    
 }
