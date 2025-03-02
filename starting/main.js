@@ -6,14 +6,12 @@ const fieldCharacter = '░';
 const pathCharacter = '*';
 
 class Field {
-    //Added Field to the constructor
-    constructor(Field){
-        this.field = Field;
-    }
-    //Step 3 gave Field a .print()
-    .print(){
-        thid.field.forEach(row => console.log(row.join('')));
-    }
+  constructor(field) {
+    this.feild = feild;
+    this.playerPostion = { x: 0, y: 0}; //Player starts at 0,0
+  }
 
-    
+  print() {
+    console.log(this.field.map(row => row.join(' ')).join('\n'));
+  }
 }
