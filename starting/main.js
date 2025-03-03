@@ -9,54 +9,93 @@ class Field {
   constructor(field) {
     this.feild = feild;
     this.playerPostion = { x: 0, y: 0}; //Player starts at 0,0
+    }
   }
 
+  // Print the current field state
   print() {
-    console.log(this.field.map(row => row.join(' ')).join('\n'));
-  } // Thissets up the field and a print method to visualize it.
+    console.clear();
+    this.field.forEach(row => console.log(row.join('')));
+  }
+ // Thissets up the field and a print method to visualize it.
 
-  move(direction) {
-    let { x, y } =this.playerPostion;
-
-    swtich (direction) {
-        case 'w': y--; break; // Move up
-        case 's': y++; break; // Move down
-        case 'a': x--; break; // Move left
-        case 'd': x++; break; // Move right
-        default: console.log('Invalid move! Use w/a/s/d'); return;
-    }
-
-    //Check bounderies
-    if (y < 0 || y >= this.field.length || x < 0 || x>= this.field[0].length) {
-        console.log('You moved out of bounds! Game Over!');
-        process.exit();
-    }
-    
-    //Check the new Postion
-    const newTile = this.field[y][x];
-    if (newTile === '0') {
-        console.log('YOu fell into a hole! Game Over!');
-        process.exit();
-    } else if (newTile === '^') {
-        console.log('You found your hat! You Win!');
-        process.exit();
-    }
-
-    // MOve the PLayer
-    this.field[y][x] = '*';
-    this.playerpostion = {x, y };
+ // Move the player based on input
+ move(direction) {
+  switch (direction) {
+    case 'w': this.playerY -= 1; break; // Up
+    case 's': this.playerY += 1; break; // Down
+    case 'a': this.playerX -= 1; break; // Left
+    case 'd': this.playerX += 1; break; // Right
+    default:
+      console.log("Invalid input! Use 'w', 'a', 's', or 'd'.");
+      return;
   }
 
+  // Check if out of bounds
+  if (this.playerY < 0 || this.playerY >= this.field.length ||
+      this.playerX < 0 || this.playerX >= this.field[0].length) {
+    console.log("You moved out of bounds! Game over.");
+    this.gameOver = true;
+    return;
+  }
+
+  // Get the new tile
+  const tile = this.field[this.playerY][this.playerX];
+
+  if (tile === 'O') {
+    console.log("You fell into a hole! Game over.");
+    this.gameOver = true;
+  } else if (tile === '^') {
+    console.log("Congratulations! You found your hat! 🎉");
+    this.gameOver = true;
+  } else {
+    this.field[this.playerY][this.playerX] = '*'; // Mark path
+  }
 }
 
-const myField = new Field([
-  ['*', '░', 'O'],
-  ['░', 'O', '░'],
-  ['░', '^', '░'],
-]);
-
-while (true) {
-  myField.print();
-  const move = prompt('Which way? (w = up, s = down, a = left, d = right): ');
-  myField.move(move);
+// Start the game loop
+play() {
+  console.log("Find Your Hat! Move with 'w', 'a', 's', 'd'.");
+  
+  while (!this.gameOver) {
+    this.print();
+    let move = prompt("Move: ");
+    this.move(move);
+  }
 }
+
+// Static method to generate a random field
+static generateField(height, width, holePercentage = 20) {
+  let field = Array.from({ length: height }, () => Array(width).fill('░'));
+
+  // Add holes
+  let totalTiles = height * width;
+  let numHoles = Math.floor((holePercentage / 100) * totalTiles);
+
+  for (let i = 0; i < numHoles; i++) {
+    let holeX, holeY;
+    do {
+      holeX = Math.floor(Math.random() * width);
+      holeY = Math.floor(Math.random() * height);
+    } while ((holeX === 0 && holeY === 0) || field[holeY][holeX] !== '░');
+    field[holeY][holeX] = 'O';
+  }
+
+  // Add hat
+  let hatX, hatY;
+  do {
+    hatX = Math.floor(Math.random() * width);
+    hatY = Math.floor(Math.random() * height);
+  } while ((hatX === 0 && hatY === 0) || field[hatY][hatX] === 'O');
+  field[hatY][hatX] = '^';
+
+  // Place player start
+  field[0][0] = '*';
+
+  return field;
+}
+}
+
+// Create a field and start the game
+const myField = new Field(Field.generateField(5, 5, 20));
+myField.play();
