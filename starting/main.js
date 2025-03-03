@@ -46,4 +46,17 @@ class Field {
     this.field[y][x] = '*';
     this.playerpostion = {x, y };
   }
+
+}
+
+const myField = new Field([
+  ['*', '░', 'O'],
+  ['░', 'O', '░'],
+  ['░', '^', '░'],
+]);
+
+while (true) {
+  myField.print();
+  const move = prompt('Which way? (w = up, s = down, a = left, d = right): ');
+  myField.move(move);
 }
