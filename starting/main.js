@@ -16,7 +16,7 @@ class Field {
   print() {
     console.clear();
     this.field.forEach(row => console.log(row.join('')));
-  }
+  };
  // Thissets up the field and a print method to visualize it.
 
  // Move the player based on input
